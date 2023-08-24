@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写api</title>
+</head>
+<body>
+    <h2>手写api, 啥也没有, 都在源码里</h2>
+    <script src="./index.js"></script>
+    <script>
+        // const user1 = shallowReactive({
+        //     name: "李白",
+        //     age: 61,
+        //     skills: ["写诗诗", "喝酒酒", "看妞妞"],
+        //     cat: {
+        //         name: "花花",
+        //         color: "yellow"
+        //     }
+        // })
+        // user1.name += "青莲居士"
+        const user2 = reactive({
+            name: "李白",
+            age: 61,
+            skills: ["写诗诗", "喝酒酒", "看妞妞"],
+            cat: {
+                name: "花花",
+                color: "yellow"
+            }
+        })
+        user2.skills[user2.skills.length] = "抽烟"
+        user2.cat.color = "red"
+        console.log(user2);
+    </script>
+</body>
+</html>
