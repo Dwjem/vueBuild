@@ -1,17 +1,18 @@
 <template>
     <div class="container">
         <Headers :addTodo="addTodo" />
-        <List :todos="todos" :deleteTodo="deleteTodo" />
-        <Footers :isChecked="allChecked" :todos="todos" :changeAll="changeAll" :clearDone="clearDone" :deleteAll="deleteAll" />
+        <List :todos="todos" :changeTodo="changeTodo" :deleteTodo="deleteTodo" />
+        <Footers :todos="todos" :changeAll="changeAll" :clearDone="clearDone" :deleteAll="deleteAll" />
     </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref, toRefs } from 'vue';
+import { defineComponent, onMounted, reactive, toRefs, watch, watchEffect } from 'vue';
 import Headers from "@/components/todolist/header.vue"
 import List from "@/components/todolist/list.vue"
 import Footers from "@/components/todolist/footer.vue"
 import { Todo } from "@/types/todo"
+import { getStore, setStore } from "@/utils/store"
 export default defineComponent({
     name: "todoList",
     components: {
@@ -20,19 +21,15 @@ export default defineComponent({
         Footers
     },
     setup() {
+        // 创建todos列表
         const data = reactive<{ todos: Todo[] }>({
-            todos: [
-                { id: 1, title: "吃饭", isDone: false },
-                { id: 2, title: "睡觉", isDone: true },
-                { id: 3, title: "打豆豆", isDone: false },
-                { id: 4, title: "打游戏", isDone: true },
-                { id: 5, title: "打人", isDone: false }
-            ]
+            todos: []
         })
-        // 全选状态
-        const allChecked = computed(() => {
-            return data.todos.every(item => item.isDone)
-        })
+        // 填充本地todos记录
+        const todos = getStore<Todo[]>("todos")
+        if (todos) {
+            data.todos = todos
+        }
         // 添加todo
         const addTodo = (todo: Todo) => {
             data.todos.unshift(todo)
@@ -44,6 +41,11 @@ export default defineComponent({
                 data.todos = data.todos.filter(item => item.id !== id)
             }
         }
+        // 选中一个
+        const changeTodo = (id:number, isDone:boolean)=>{
+            const index = data.todos.findIndex(item => item.id === id)
+            data.todos[index].isDone = isDone
+        }
         // 全部选中
         const changeAll = (isDone: boolean) => {
             data.todos = data.todos.map(item => {
@@ -54,22 +56,27 @@ export default defineComponent({
         // 清除已完成
         const clearDone = () => {
             data.todos = data.todos.filter(item => item.isDone == false)
-            console.log(data.todos);
-            
         }
         // 删除所有
         const deleteAll = () => {
-            data.todos = []
+            if(confirm('确定删除吗？')){
+                data.todos = []
+            }
         }
+        // 监听数据变化
+        watch(()=>data.todos, (newValue, oldValue) => {
+            setStore("todos", newValue)
+        },{deep:true})
+
         // 返回数据
         return {
             ...toRefs(data),
             addTodo,
             deleteTodo,
+            changeTodo,
             changeAll,
             clearDone,
-            deleteAll,
-            allChecked
+            deleteAll
         }
     }
 })

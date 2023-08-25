@@ -1,6 +1,6 @@
 <template>
     <li class="item">
-        <label><input type="checkbox" name="xxx" id="xxx" v-model="todo.isDone">
+        <label><input type="checkbox" name="xxx" id="xxx" v-model="isDone">
             <p>{{ todo.title }}</p>
         </label>
         <button class="del" @click="deledte(todo.id)">删除</button>
@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { Todo } from '../../types/todo';
 export default defineComponent({
     name: "item",
@@ -20,6 +20,10 @@ export default defineComponent({
         deleteTodo:{
             type: Function,
             required: true
+        },
+        changeTodo:{
+            type: Function,
+            required: true
         }
     },
     setup(props) {
@@ -27,8 +31,15 @@ export default defineComponent({
         const deledte = (id: number)=>{
             props.deleteTodo(id);
         }
+        const isDone = computed({
+            get: ()=> props.todo.isDone,
+            set: (value)=>{
+                props.changeTodo(props.todo.id, value);
+            }
+        })
         return {
-            deledte
+            deledte,
+            isDone
         }
     }
 })

@@ -2,8 +2,9 @@
     <div class="main">
         <ul class="list">
             <List v-for="item in todos" 
-            :todo="item" :key="item.id"
-            :deleteTodo="deleteTodo"
+                :todo="item" :key="item.id"
+                :deleteTodo="deleteTodo"
+                :changeTodo="changeTodo"
              />
         </ul>
     </div>
@@ -21,6 +22,10 @@ export default defineComponent({
             default: []
         },
         deleteTodo:{
+            type: Function,
+            required: true
+        },
+        changeTodo:{
             type: Function,
             required: true
         }

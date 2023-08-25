@@ -2,7 +2,7 @@
     <div class="footer">
         <div>
             <label>
-                <input type="checkbox" v-model="cheched" @change="changeAll(cheched)">
+                <input type="checkbox" v-model="cheched">
                 <span>全选</span>&emsp;
             </label>
             <span>已完成 {{ checkedNum }}</span> /
@@ -36,20 +36,22 @@ export default defineComponent({
         deleteAll: {
             type: Function,
             required: true
-        },
-        allChecked: {
-            type: Boolean,
-            default: false
         }
     },
     setup(props) {
-        const cheched = ref(false);
         // 已完成的个数
         const checkedNum = computed(() => {
             const num = (props.todos as Todo[]).filter((todo) => todo.isDone).length;
-            cheched.value = num > 0 && num === props.todos.length;
             return num
         });
+        const cheched = computed({
+            get(){
+                return checkedNum.value > 0 && checkedNum.value === props.todos.length;
+            },
+            set(val){
+                props.changeAll(val)
+            }
+        })
         return {
             cheched,
             checkedNum
